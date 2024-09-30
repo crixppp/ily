@@ -46,7 +46,7 @@
       position: absolute;
       font-size: 30px;
       color: red;
-      animation: explode 1s ease-out forwards;
+      animation: explode 1.5s ease-out forwards;
       opacity: 0;
     }
 
@@ -94,6 +94,11 @@
       // Play the audio
       audio.play();
 
+      // Get the heart's position relative to the viewport
+      const heartRect = heart.getBoundingClientRect();
+      const heartCenterX = heartRect.left + heartRect.width / 2;
+      const heartCenterY = heartRect.top + heartRect.height / 2;
+
       // Create the heart explosion
       for (let i = 0; i < 20; i++) {
         const confettiHeart = document.createElement('div');
@@ -101,16 +106,17 @@
         confettiHeart.classList.add('heart-confetti');
         document.body.appendChild(confettiHeart);
 
-        const x = (Math.random() - 0.5) * 200 + 'px';
-        const y = (Math.random() - 0.5) * 200 + 'px';
+        // Generate random directions for the explosion
+        const x = (Math.random() - 0.5) * window.innerWidth * 2 + 'px';
+        const y = (Math.random() - 0.5) * window.innerHeight * 2 + 'px';
 
         confettiHeart.style.setProperty('--x', x);
         confettiHeart.style.setProperty('--y', y);
-        confettiHeart.style.left = heart.offsetLeft + 'px';
-        confettiHeart.style.top = heart.offsetTop + 'px';
+        confettiHeart.style.left = heartCenterX + 'px';
+        confettiHeart.style.top = heartCenterY + 'px';
 
         // Remove the confetti heart after the animation ends
-        setTimeout(() => confettiHeart.remove(), 1000);
+        setTimeout(() => confettiHeart.remove(), 1500);
       }
     });
   </script>
