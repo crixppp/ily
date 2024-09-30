@@ -31,6 +31,7 @@
       color: red;
       cursor: pointer;
       transition: transform 0.3s ease;
+      user-select: none; /* Prevent text highlighting */
     }
 
     .love-heart:hover {
@@ -73,6 +74,7 @@
   <script>
     const startDate = new Date('July 5, 2024 00:00:00').getTime();
     const audio = document.getElementById('love-song');
+    let heartInterval;
 
     function updateTimer() {
       const now = new Date().getTime();
@@ -88,38 +90,57 @@
 
     setInterval(updateTimer, 1000);
 
-    // Play the song and trigger confetti when the heart is clicked
-    const heart = document.getElementById('main-heart');
-    heart.addEventListener('click', () => {
-      // Play the audio
-      audio.play();
-
-      // Get the heart's exact position relative to the viewport
+    // Function to create a single heart explosion
+    function createHeartExplosion() {
+      const heart = document.getElementById('main-heart');
       const heartRect = heart.getBoundingClientRect();
       const heartCenterX = heartRect.left + heartRect.width / 2;
       const heartCenterY = heartRect.top + heartRect.height / 2;
 
-      // Create the heart explosion
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 5; i++) { // Slightly fewer hearts for continuous effect
         const confettiHeart = document.createElement('div');
         confettiHeart.innerHTML = '♡';
         confettiHeart.classList.add('heart-confetti');
         document.body.appendChild(confettiHeart);
 
-        // Generate random directions for the explosion
         const x = (Math.random() - 0.5) * window.innerWidth * 2 + 'px';
         const y = (Math.random() - 0.5) * window.innerHeight * 2 + 'px';
 
         confettiHeart.style.setProperty('--x', x);
         confettiHeart.style.setProperty('--y', y);
-
-        // Position the confetti heart at the centre of the clicked heart
         confettiHeart.style.left = heartCenterX + 'px';
         confettiHeart.style.top = heartCenterY + 'px';
 
-        // Remove the confetti heart after the animation ends
         setTimeout(() => confettiHeart.remove(), 1500);
       }
+    }
+
+    const heart = document.getElementById('main-heart');
+
+    // Play the audio and start the explosion when clicked
+    heart.addEventListener('mousedown', () => {
+      audio.play();
+      createHeartExplosion(); // Initial explosion
+
+      // Keep creating hearts while the mouse button is held down
+      heartInterval = setInterval(createHeartExplosion, 200);
+    });
+
+    // Stop the explosion when the mouse button is released
+    heart.addEventListener('mouseup', () => {
+      clearInterval(heartInterval);
+    });
+
+    // Also handle touch events for mobile users
+    heart.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Prevents mobile text highlighting
+      audio.play();
+      createHeartExplosion();
+      heartInterval = setInterval(createHeartExplosion, 200);
+    });
+
+    heart.addEventListener('touchend', () => {
+      clearInterval(heartInterval);
     });
   </script>
 </body>
