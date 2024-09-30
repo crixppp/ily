@@ -94,7 +94,7 @@
       // Play the audio
       audio.play();
 
-      // Get the heart's position relative to the viewport
+      // Get the heart's exact position relative to the viewport
       const heartRect = heart.getBoundingClientRect();
       const heartCenterX = heartRect.left + heartRect.width / 2;
       const heartCenterY = heartRect.top + heartRect.height / 2;
@@ -112,6 +112,8 @@
 
         confettiHeart.style.setProperty('--x', x);
         confettiHeart.style.setProperty('--y', y);
+
+        // Position the confetti heart at the centre of the clicked heart
         confettiHeart.style.left = heartCenterX + 'px';
         confettiHeart.style.top = heartCenterY + 'px';
 
