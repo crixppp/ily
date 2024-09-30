@@ -17,7 +17,7 @@
       color: white;
       text-align: center;
       overflow: hidden;
-      user-select: none; /* Prevents text selection on the entire page */
+      user-select: none; /* Prevent text selection globally */
     }
 
     .timer-container {
@@ -32,7 +32,7 @@
       color: red;
       cursor: pointer;
       transition: transform 0.3s ease;
-      user-select: none; /* Prevents text highlighting for the heart specifically */
+      user-select: none; /* Prevent text highlighting for the heart */
     }
 
     .love-heart:hover {
@@ -42,7 +42,7 @@
     #timer {
       font-size: 3rem;
       margin-top: 20px;
-      user-select: none; /* Prevents text selection for the timer */
+      user-select: none; /* Prevent text selection for the timer */
     }
 
     .heart-confetti {
@@ -80,6 +80,7 @@
     const startDate = new Date('July 5, 2024 00:00:00').getTime();
     const audio = document.getElementById('love-song');
     let heartInterval, clickTimeout;
+    let isHolding = false; // Track whether the user is holding the heart
 
     function updateTimer() {
       const now = new Date().getTime();
@@ -122,14 +123,22 @@
 
     const heart = document.getElementById('main-heart');
 
+    // Prevent text selection and default actions
+    heart.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // Prevents dragging and default selection
+    });
+
     // Detect if it's a click or hold
     heart.addEventListener('mousedown', () => {
       // Clear any previous interval or timeout
       clearInterval(heartInterval);
       clearTimeout(clickTimeout);
 
+      isHolding = false; // Reset holding status
+
       // Set a timeout to determine if the user is holding or just clicking
       clickTimeout = setTimeout(() => {
+        isHolding = true;
         // This will only run if the user holds the click for more than 200ms
         heartInterval = setInterval(createHeartExplosion, 200);
       }, 200);
@@ -137,8 +146,7 @@
 
     // If the mouse is released, check if it's a click or stop the continuous hearts
     heart.addEventListener('mouseup', () => {
-      // If the mouse is released quickly, it's a click, so create one explosion
-      if (Date.now() - clickTimeout < 200) {
+      if (!isHolding) {
         createHeartExplosion();
         audio.play(); // Play audio on click
       }
@@ -153,16 +161,27 @@
       clearInterval(heartInterval);
       clearTimeout(clickTimeout);
 
+      isHolding = false;
+
       clickTimeout = setTimeout(() => {
+        isHolding = true;
         heartInterval = setInterval(createHeartExplosion, 200);
       }, 200);
     });
 
     heart.addEventListener('touchend', () => {
+      if (!isHolding) {
+        createHeartExplosion(); // Trigger one explosion on touch release
+        audio.play(); // Play audio on touch
+      }
+
       clearTimeout(clickTimeout);
+      clearInterval(heartInterval); // Stop continuous hearts if holding
+    });
+
+    // Handle touch move or mouse out (cancel the interval)
+    heart.addEventListener('mouseout', () => {
       clearInterval(heartInterval);
-      createHeartExplosion(); // Trigger one explosion on release
-      audio.play(); // Play audio on touch
     });
   </script>
 </body>
