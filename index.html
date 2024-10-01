@@ -121,7 +121,7 @@
   <!-- Password overlay -->
   <div class="password-overlay" id="password-overlay">
     <h1>Enter password</h1>
-    <input type="password" class="password-input" id="password-input" placeholder="••••••">
+    <input type="password" class="password-input" id="password-input" placeholder="••••••" maxlength="5">
   </div>
 
   <!-- Main content -->
@@ -140,10 +140,9 @@
     const passwordOverlay = document.getElementById("password-overlay");
     const mainContent = document.getElementById("main-content");
 
-    // Listen for the 'Enter' key press on the password input
-    passwordInput.addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();  // Prevents default form submission
+    // Listen for input changes and check when 5 characters are entered
+    passwordInput.addEventListener("input", function () {
+      if (passwordInput.value.length === 5) {
         checkPassword();
       }
     });
