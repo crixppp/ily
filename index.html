@@ -254,4 +254,23 @@
       clickTimeout = setTimeout(() => {
         isHolding = true;
         heartInterval = setInterval(createHeartExplosion, 200);
-      },
+      }, 200);
+    });
+
+    heart.addEventListener('touchend', () => {
+      if (!isHolding) {
+        createHeartExplosion(); // Trigger one explosion on touch release
+        audio.play(); // Play audio on touch
+      }
+
+      clearTimeout(clickTimeout);
+      clearInterval(heartInterval); // Stop continuous hearts if holding
+    });
+
+    // Handle touch move or mouse out (cancel the interval)
+    heart.addEventListener('mouseout', () => {
+      clearInterval(heartInterval);
+    });
+  </script>
+</body>
+</html>
